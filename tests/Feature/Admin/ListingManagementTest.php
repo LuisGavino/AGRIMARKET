@@ -153,7 +153,11 @@ class ListingManagementTest extends TestCase
     }
 
     #[DataProvider('types')]
-    public function test_customers_and_guests_cannot_change_listings(string $path): void
+    public function test_customers_and_guests_cannot_change_listings(
+        string $path,
+        string $type,
+        array $extra
+    ): void
     {
         $listing = Listing::factory()->create(['type' => 'produce']);
 
