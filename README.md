@@ -9,7 +9,7 @@ One Laravel application with two interfaces that share the same codebase, config
 
 ## Installation
 
-Requires PHP 8.3+ (with `pdo_sqlite` or `pdo_mysql`) and Composer.
+Requires PHP 8.4.1+ (with `pdo_sqlite` or `pdo_mysql`) and Composer.
 
 ```bash
 composer install
@@ -38,7 +38,7 @@ Customer interface: <http://localhost:8000>. Administrator sign-in: <http://loca
 
 ## CRUD modules
 
-> **Status:** these modules were written without being able to run Laravel in the authoring environment (no `vendor/`, package installs disabled). PHP syntax was linted and feature tests were written, but **the tests have not been run yet**. Run `composer test` and click through each page before relying on them.
+> **Status:** the automated tests (`composer test`) cover these modules. Click through each page in a browser before relying on them.
 
 All administrator modules live under `/admin` behind `auth` + `admin` middleware (customers get 403, guests are sent to the admin login).
 

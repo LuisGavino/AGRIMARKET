@@ -52,6 +52,8 @@ class CustomerInterfaceTest extends TestCase
         $this->actingAs($me)->get(route('orders.index'))->assertOk()->assertSee('Order #'.$mine->id)->assertDontSee('Order #'.$theirs->id);
         $this->actingAs($me)->get(route('orders.show', $mine))->assertOk();
         $this->actingAs($me)->get(route('orders.show', $theirs))->assertForbidden();
+        // actingAs() stays in effect for the rest of the test, so sign out before checking guest access.
+        auth()->logout();
         $this->get(route('orders.index'))->assertRedirect(route('login'));
     }
 
