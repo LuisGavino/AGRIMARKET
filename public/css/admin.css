@@ -265,3 +265,20 @@ body.admin{font-family:'Nunito Sans',system-ui,sans-serif;background:#fff;color:
 /* Authentication: messages, and a logout button that looks like the former link */
 .flash{margin:0 0 18px;padding:10px 14px;border-radius:8px;background:var(--head);color:var(--forest);font-size:14px;font-weight:600}
 button.logout{padding:0}
+
+/* CRUD wiring (additive; does not change the original design) */
+.acts form{display:inline-flex;margin:0}
+.acts button{background:none;border:0;padding:0;color:inherit;cursor:pointer;display:inline-flex}
+.acts button:hover .icon{color:#111}
+button.btn-blue{border:0;cursor:pointer;font-family:inherit}
+a.btn-blue{text-decoration:none}
+.fld select.in,.fld textarea.in{width:100%;font-family:inherit;font-size:15px}
+.fld textarea.in{height:auto;min-height:110px;padding:12px 17px}
+.fld .in{width:100%}
+.fld .err,.errors{color:#b42318;font-size:13px;margin-top:5px}
+.errors{margin:0 0 18px;padding:10px 14px;border-radius:8px;background:#fdecea;font-size:14px;font-weight:600}
+.tools-r form{display:flex;gap:16px;align-items:center;margin:0}
+.pill-tabs a{text-decoration:none}
+.chk{display:flex;align-items:center;gap:8px;font-size:15px}
+.thumb{width:90px;height:90px;border-radius:8px;object-fit:cover;border:1px solid #e1e1e1}
+.pager .off{opacity:.45;pointer-events:none}

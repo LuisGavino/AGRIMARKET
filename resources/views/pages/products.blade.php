@@ -4,14 +4,7 @@
 @section('body_class', 'public--gradient')
 
 @php
-    // Static sample data so the page renders without a database.
-    $featured = [
-        ['name' => 'Green Apple',     'price' => '199'],
-        ['name' => 'Chanise Cabbage', 'price' => '149'],
-        ['name' => 'Green Capsicum',  'price' => '14.99'],
-        ['name' => 'Ladies Finger',   'price' => '14.99'],
-    ];
-
+    // Popular categories keep the original design; the product grid below is database-backed.
     $categories = [
         ['label' => 'Fresh Fruit',      'image' => 'fresh-fruit.png'],
         ['label' => 'Fresh Vegetables', 'image' => 'fresh-vegetables.png'],
@@ -20,17 +13,31 @@
         ['label' => 'Seeds',            'image' => 'seeds.png'],
         ['label' => 'Poultry',          'image' => 'poultry.png'],
     ];
-@endphp
+@endphpphp
 
 @section('content')
     <div class="products-wrap">
-        <x-section-heading title="Featured Products" />
+        <x-section-heading :title="$searching ? 'Search Results' : 'Featured Products'" />
 
         <div class="product-grid">
-            @foreach ($featured as $product)
-                <x-product-card :name="$product['name']" :price="$product['price']" />
-            @endforeach
+            @forelse ($products as $product)
+                <x-product-card
+                    :name="$product->name"
+                    :price="number_format((float) $product->price, 2)"
+                    :src="$product->imageUrl()"
+                    :href="route('products.show', $product)" />
+            @empty
+                <p>No listings found.</p>
+            @endforelse
         </div>
+
+        @if ($products->hasPages())
+            <div style="display:flex;justify-content:center;gap:16px;margin:24px 0">
+                @if ($products->previousPageUrl())<a href="{{ $products->previousPageUrl() }}">&larr; Previous</a>@endif
+                <span>Page {{ $products->currentPage() }} of {{ $products->lastPage() }}</span>
+                @if ($products->nextPageUrl())<a href="{{ $products->nextPageUrl() }}">Next &rarr;</a>@endif
+            </div>
+        @endif
 
         <x-section-heading title="Popular Categories" />
 

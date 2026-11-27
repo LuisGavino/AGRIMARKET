@@ -40,6 +40,16 @@ class User extends Authenticatable
         return $this->isAdmin() ? 'admin.dashboard' : 'home';
     }
 
+    public function orders(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function listings(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Listing::class, 'seller_id');
+    }
+
     /** Emails are stored in lower case so duplicates cannot differ only by case. */
     protected function email(): Attribute
     {

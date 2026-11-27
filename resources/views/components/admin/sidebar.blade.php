@@ -1,10 +1,12 @@
 @php
     $links = [
         ['route' => 'admin.dashboard', 'match' => 'admin.dashboard', 'label' => 'Dashboard', 'icon' => 'home'],
-        ['route' => 'admin.users', 'match' => 'admin.users', 'label' => 'Users', 'icon' => 'users'],
-        ['route' => 'admin.produce', 'match' => 'admin.produce', 'label' => 'Produce', 'icon' => 'leaf'],
-        ['route' => 'admin.livestock', 'match' => 'admin.livestock', 'label' => 'Livestock', 'icon' => 'cow'],
-        ['route' => 'admin.service-providers', 'match' => 'admin.service-providers', 'label' => 'Service Providers', 'icon' => 'bolt'],
+        ['route' => 'admin.users', 'match' => 'admin.users*', 'label' => 'Users', 'icon' => 'users'],
+        ['route' => 'admin.produce', 'match' => 'admin.produce*', 'label' => 'Produce', 'icon' => 'leaf'],
+        ['route' => 'admin.livestock', 'match' => 'admin.livestock*', 'label' => 'Livestock', 'icon' => 'cow'],
+        ['route' => 'admin.service-providers', 'match' => 'admin.service-providers*', 'label' => 'Service Providers', 'icon' => 'bolt'],
+        ['route' => 'admin.categories', 'match' => 'admin.categories*', 'label' => 'Categories', 'icon' => 'leaf'],
+        ['route' => 'admin.orders', 'match' => 'admin.orders*', 'label' => 'Orders', 'icon' => 'bag'],
         ['route' => 'admin.settings.account', 'match' => 'admin.settings.*', 'label' => 'Settings', 'icon' => 'settings'],
     ];
 @endphp

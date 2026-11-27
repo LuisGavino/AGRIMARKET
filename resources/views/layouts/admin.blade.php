@@ -15,6 +15,9 @@
 
         <main class="main">
             @include('partials.flash')
+            @foreach (['delete', 'status'] as $key)
+                @error($key)<div class="errors" role="alert">{{ $message }}</div>@enderror
+            @endforeach
             <h1 class="page-title">@yield('heading')</h1>
             @yield('content')
         </main>

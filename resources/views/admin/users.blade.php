@@ -3,49 +3,52 @@
 @section('title', 'Users')
 @section('heading', 'Manage Users')
 
-@php
-    $users = [
-        ['#CUST001', 'John Doe', '+1234567890', 25, true],
-        ['#CUST001', 'John Doe', '+1234567890', 25, true],
-        ['#CUST001', 'John Doe', '+1234567890', 25, true],
-        ['#CUST001', 'John Doe', '+1234567890', 25, true],
-        ['#CUST001', 'Jane Smith', '+1234567890', 5, false],
-        ['#CUST001', 'Emily Davis', '+1234567890', 30, true],
-        ['#CUST001', 'Emily Davis', '+1234567890', 30, true],
-        ['#CUST001', 'Emily Davis', '+1234567890', 30, true],
-    ];
-@endphp
-
 @section('content')
 <div class="stats-3 narrow">
-    <x-admin.stat-card title="Total Customers" value="312" delta="↑64%" caption="Last 7 days" />
-    <x-admin.stat-card title="New Customers" value="3" delta="↑14.4%" caption="Today" />
-    <x-admin.stat-card title="Total Customers" value="11,040" delta="↑14.4%" caption="All Time" />
+    <x-admin.stat-card title="Total Users" :value="number_format($counts['week'])" caption="Last 7 days" />
+    <x-admin.stat-card title="New Users" :value="number_format($counts['today'])" caption="Today" />
+    <x-admin.stat-card title="Total Users" :value="number_format($counts['all'])" caption="All Time" />
 </div>
 
 <section class="table-card">
+    <div class="toolbar" style="padding:18px 22px 0">
+        <form method="get" action="{{ route('admin.users') }}" class="tools-r">
+            <label class="search-box">
+                <input type="search" name="q" value="{{ $search }}" placeholder="Search name or email">
+                <x-admin.icon name="search" :size="22" />
+            </label>
+            <button class="filter-btn" type="submit" aria-label="Search"><x-admin.icon name="filter" :size="20" /></button>
+        </form>
+        <a class="btn-blue" href="{{ route('admin.users.create') }}">Add User</a>
+    </div>
+
     <table class="tbl users-tbl">
         <thead>
-            <tr><th>Customer Id</th><th>Name</th><th>Phone</th><th>Order Count</th><th>Status</th><th>Action</th></tr>
+            <tr><th>User Id</th><th>Name</th><th>Email</th><th>Order Count</th><th>Role</th><th>Action</th></tr>
         </thead>
         <tbody>
-            @foreach ($users as [$id, $name, $phone, $orders, $active])
+            @forelse ($users as $user)
                 <tr>
-                    <td>{{ $id }}</td>
-                    <td>{{ $name }}</td>
-                    <td>{{ $phone }}</td>
-                    <td>{{ $orders }}</td>
-                    <td><span @class(['st', 'on' => $active, 'off' => ! $active])>{{ $active ? 'Active' : 'Inactive' }}</span></td>
+                    <td>#{{ str_pad((string) $user->id, 4, '0', STR_PAD_LEFT) }}</td>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->email }}</td>
+                    <td>{{ $user->orders_count }}</td>
+                    <td><span @class(['st', 'on' => $user->isAdmin(), 'off' => ! $user->isAdmin()])>{{ ucfirst($user->role) }}</span></td>
                     <td>
                         <span class="acts">
-                            <a href="#" aria-label="Message"><x-admin.icon name="message" :size="24" :stroke="1.5" /></a>
-                            <a href="#" aria-label="Delete"><x-admin.icon name="trash" :size="24" :stroke="1.5" /></a>
+                            <a href="{{ route('admin.users.edit', $user) }}" aria-label="Edit"><x-admin.icon name="edit" :size="24" :stroke="1.5" /></a>
+                            <form method="post" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Delete this user? This cannot be undone.')">
+                                @csrf @method('DELETE')
+                                <button type="submit" aria-label="Delete"><x-admin.icon name="trash" :size="24" :stroke="1.5" /></button>
+                            </form>
                         </span>
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr><td colspan="6">No users found.</td></tr>
+            @endforelse
         </tbody>
     </table>
-    <div style="padding:0 22px 14px"><x-admin.pagination /></div>
+    <div style="padding:0 22px 14px"><x-admin.pagination :paginator="$users" /></div>
 </section>
 @endsection
