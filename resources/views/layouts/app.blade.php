@@ -12,6 +12,7 @@
         @include('partials.sidebar')
 
         <div class="app-main">
+            @include('partials.flash')
             @yield('content')
         </div>
     </div>

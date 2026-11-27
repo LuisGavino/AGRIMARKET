@@ -7,24 +7,71 @@ One Laravel application with two interfaces that share the same codebase, config
 | Customer | `layouts/public`, `layouts/app`, `layouts/seller` | `public/css/app.css` | `/` | `landing`, `home`, `products`, `wishlist`, `settings.*`, `seller.*` ... |
 | Administrator | `layouts/admin` | `public/css/admin.css` | `/admin` | `admin.dashboard`, `admin.users`, `admin.produce`, `admin.livestock`, `admin.service-providers`, `admin.settings.*` |
 
-## Setup
+## Installation
+
+Requires PHP 8.3+ (with `pdo_sqlite` or `pdo_mysql`) and Composer.
 
 ```bash
 composer install
-cp .env.example .env
-php artisan key:generate
-touch database/database.sqlite      # skip if you use MySQL (set DB_* in .env)
-php artisan migrate                 # only adds tables / the users.role column
+cp .env.example .env          # only if you have no .env yet
+php artisan key:generate      # only for a new .env
+```
+
+## Database setup
+
+SQLite is the default. For an existing database, keep your current `DB_*` values in `.env`.
+
+```bash
+touch database/database.sqlite   # new SQLite setups only
+php artisan migrate              # adds missing tables and users.role; keeps data
+```
+
+Do not use `migrate:fresh` or `db:wipe` on a database you want to keep.
+
+## Run
+
+```bash
 php artisan serve
 ```
 
-Open <http://localhost:8000> (customer) and <http://localhost:8000/admin/dashboard> (administrator).
+Customer interface: <http://localhost:8000>. Administrator sign-in: <http://localhost:8000/admin/login>.
+
+## Authentication
+
+- **Registration** (`/signup`): name, unique email (case-insensitive), password with confirmation, and acceptance of the terms. Passwords need 8+ characters, upper and lower case letters and a symbol. New accounts are always customers and are signed in immediately.
+- **Login** (`/login` or `/admin/login`): both use the same handler (`POST /login`). Admins go to `/admin/dashboard`, customers to `/home`. The session is regenerated, and 5 failed attempts per email and IP are temporarily blocked. "Save Login" keeps you signed in.
+- **Logout** (`POST /logout`): invalidates the session and renews the CSRF token.
+- **Password hashing**: the `hashed` cast on `App\Models\User` hashes every password (bcrypt by default). Plain text is never stored.
+- **Middleware**: `auth` protects signed-in customer pages; `auth` + `admin` protect `/admin/*` (customers get 403); `guest` covers login and signup. All forms that change state carry a CSRF token.
+
+## Admin and customer accounts
+
+No account or password ships with the project.
+
+- Customer: register at `/signup`.
+- Admin: run `php artisan agrimarket:make-admin` and answer the prompts. Entering an existing email offers to promote that user.
+
+If you ran the old seeder, a `test@example.com` account with a well-known password may exist. Delete it.
+
+## Tests
+
+```bash
+composer test
+```
+
+Tests use an in-memory SQLite database (see `phpunit.xml`); a `.env` with an `APP_KEY` must exist. Use `composer test`, which clears cached configuration first, so tests cannot run against your real database.
+
+Manual check: register a customer, log out, create an admin, log in at `/admin/login`, then confirm a customer gets 403 on `/admin/dashboard`.
+
+## Not yet implemented
+
+Password reset ("forgot password"), Google/Apple sign-in, email verification, and saving changes on the account and security settings pages.
 
 ## Conventions
 
 - Customer Blade views live in `resources/views/{pages,app,auth,settings,seller,partials,layouts}`; administrator views in `resources/views/admin` and `resources/views/components/admin`.
 - `<x-icon>` is the customer icon set; `<x-admin.icon>` is the administrator icon set. They intentionally differ, so do not mix them.
-- Roles: `users.role` is `customer` (default) or `admin`. The `admin` middleware alias protects `/admin/*` once `AGRIMARKET_ENFORCE_ROLES=true`. Leave it `false` until real login is implemented (the login form is currently a static mock-up).
+- Roles: `users.role` is `customer` (default) or `admin`. It is not mass assignable.
 
 ---
 

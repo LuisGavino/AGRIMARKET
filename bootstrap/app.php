@@ -16,6 +16,14 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,
         ]);
+
+        // Guests go to the login page of the area they tried to open.
+        $middleware->redirectGuestsTo(
+            fn (Request $request) => $request->is('admin', 'admin/*') ? route('admin.login') : route('login'),
+        );
+
+        // Signed-in users who open a login or signup page go to their own home.
+        $middleware->redirectUsersTo(fn (Request $request) => route($request->user()->homeRoute()));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

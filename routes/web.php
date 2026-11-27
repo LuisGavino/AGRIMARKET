@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -10,15 +12,13 @@ use Illuminate\Support\Facades\Route;
 | wishlist, settings.*, seller.* ...). Administrator routes live under /admin
 | and are named admin.* (admin.dashboard, admin.users, ...).
 |
-| Every route still just renders a Blade view (front-end only). Role checks are
-| wired in but OFF by default, because the current login screen is a static
-| mock-up that cannot sign anyone in. Once real authentication exists, set
-| AGRIMARKET_ENFORCE_ROLES=true in .env to require login for signed-in customer
-| pages and an administrator account for /admin/* (see config/agrimarket.php).
+| Pages are Blade views. Authentication ("auth") and authorization ("admin")
+| are separate middleware. "cache.headers" stops the browser from showing a
+| protected page from its cache after logout.
 */
 
-$signedIn = config('agrimarket.enforce_roles') ? ['auth'] : [];
-$adminOnly = config('agrimarket.enforce_roles') ? ['auth', 'admin'] : [];
+$signedIn = ['auth', 'cache.headers:no_store;private'];
+$adminOnly = ['auth', 'admin', 'cache.headers:no_store;private'];
 
 /*
 |--------------------------------------------------------------------------
@@ -30,8 +30,18 @@ $adminOnly = config('agrimarket.enforce_roles') ? ['auth', 'admin'] : [];
 Route::view('/', 'pages.landing')->name('landing');
 Route::view('/about', 'pages.about')->name('about');
 Route::view('/products', 'pages.products')->name('products');
-Route::view('/login', 'auth.login')->name('login');
-Route::view('/signup', 'auth.signup')->name('signup');
+
+// ---- Authentication (shared by customers and administrators) -------------
+Route::middleware('guest')->group(function () {
+    Route::view('/login', 'auth.login')->name('login');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
+    Route::view('/signup', 'auth.signup')->name('signup');
+    Route::post('/signup', [RegisteredUserController::class, 'store'])->name('signup.store');
+});
+
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');
 
 // ---- Signed-in pages (sidebar layout) ------------------------------------
 Route::middleware($signedIn)->group(function () {
@@ -64,8 +74,8 @@ Route::middleware($signedIn)->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::prefix('admin')->name('admin.')->group(function () use ($adminOnly) {
-    // Administrator sign-in: the shared login view, continuing to the admin dashboard.
-    Route::view('/login', 'auth.login', ['redirectRoute' => 'admin.dashboard'])->name('login');
+    // Administrator sign-in page: the shared login view and the shared login handler.
+    Route::view('/login', 'auth.login')->middleware('guest')->name('login');
 
     Route::middleware($adminOnly)->group(function () {
         Route::redirect('/', '/admin/dashboard');

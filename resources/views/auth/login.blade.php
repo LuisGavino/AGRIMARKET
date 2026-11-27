@@ -5,20 +5,22 @@
 
 @section('content')
     <section class="auth">
-        <form class="auth__form" action="{{ route($redirectRoute ?? 'home') }}" method="get">
+        <form class="auth__form" action="{{ route('login.store') }}" method="post">
+            @csrf
             <h1>Welcome back!</h1>
             <p class="auth__sub">Enter your Credentials to access your account</p>
 
             <div class="auth__fields">
+                @include('auth._errors')
                 <div>
                     <label class="auth__label" for="email">Email address</label>
-                    <input class="auth__input" id="email" name="email" type="email">
+                    <input class="auth__input" id="email" name="email" type="email" value="{{ old('email') }}" autocomplete="username" required autofocus>
                 </div>
                 <div>
                     <label class="auth__label" for="password">
                         Password <a href="#">forgot password</a>
                     </label>
-                    <input class="auth__input" id="password" name="password" type="password" placeholder="Enter your password">
+                    <input class="auth__input" id="password" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required>
                 </div>
 
                 <label class="auth__check">

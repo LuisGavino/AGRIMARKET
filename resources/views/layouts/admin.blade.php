@@ -14,6 +14,7 @@
         <x-admin.sidebar />
 
         <main class="main">
+            @include('partials.flash')
             <h1 class="page-title">@yield('heading')</h1>
             @yield('content')
         </main>

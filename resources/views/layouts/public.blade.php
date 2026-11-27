@@ -11,6 +11,7 @@
     @include('partials.navbar')
 
     <main class="public-main">
+        @include('partials.flash')
         @yield('content')
     </main>
 

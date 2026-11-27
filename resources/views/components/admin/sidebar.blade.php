@@ -38,13 +38,16 @@
         <div class="me">
             <div class="av"><img src="{{ asset('images/avatar.jpg') }}" alt=""></div>
             <div>
-                <b>Antonio Gavino</b>
+                <b>{{ auth()->user()?->name }}</b>
                 <small>Admin</small>
             </div>
         </div>
-        <a class="logout" href="{{ route('admin.login') }}">
-            <x-admin.icon name="logout" :size="34" :stroke="1.5" />
-            Log Out
-        </a>
+        <form method="post" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="logout">
+                <x-admin.icon name="logout" :size="34" :stroke="1.5" />
+                Log Out
+            </button>
+        </form>
     </div>
 </aside>

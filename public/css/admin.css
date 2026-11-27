@@ -261,3 +261,7 @@ body.admin{font-family:'Nunito Sans',system-ui,sans-serif;background:#fff;color:
   .stats-3,.stats-3.narrow{grid-template-columns:1fr}
   .grid-3,.grid-3.two{grid-template-columns:1fr;width:100%}
 }
+
+/* Authentication: messages, and a logout button that looks like the former link */
+.flash{margin:0 0 18px;padding:10px 14px;border-radius:8px;background:var(--head);color:var(--forest);font-size:14px;font-weight:600}
+button.logout{padding:0}

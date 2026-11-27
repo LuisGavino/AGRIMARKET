@@ -32,13 +32,16 @@
                 <img src="{{ asset('images/avatar-user.jpg') }}" alt="">
             </div>
             <div>
-                <div class="sidebar__name">Antonio Gavino</div>
-                <div class="sidebar__role">User</div>
+                <div class="sidebar__name">{{ auth()->user()?->name }}</div>
+                <div class="sidebar__role">{{ auth()->user()?->isAdmin() ? 'Admin' : 'User' }}</div>
             </div>
         </div>
 
-        <a href="{{ route('landing') }}" class="sidebar__logout">
-            <x-icon name="logout" :size="30" /> Log Out
-        </a>
+        <form method="post" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="sidebar__logout">
+                <x-icon name="logout" :size="30" /> Log Out
+            </button>
+        </form>
     </div>
 </aside>
